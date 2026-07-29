@@ -1,7 +1,32 @@
+# Dependencies
 node_modules/
+
+# Build outputs and coverage
 dist/
 coverage/
 **/target/
+*.tsbuildinfo
+*.tgz
+
+# Tool caches and local reports
+.cache/
+.eslintcache
+.vitest/
 .agentic-preflight/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Logs and temporary files
 *.log
+*.tmp
+*.swp
+*~
+
+# Editors and operating systems
+.idea/
+.vscode/
 .DS_Store
+Thumbs.db
