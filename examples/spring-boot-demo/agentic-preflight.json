@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "checks": {
+    "test": {
+      "command": "mvn",
+      "args": ["--batch-mode", "--quiet", "test"],
+      "description": "Run the Spring Boot unit tests",
+      "timeoutMs": 180000
+    },
+    "verify": {
+      "command": "mvn",
+      "args": ["--batch-mode", "--quiet", "verify", "-DskipTests"],
+      "description": "Compile and package the application",
+      "timeoutMs": 180000
+    }
+  },
+  "security": {
+    "allowedExecutables": ["mvn"],
+    "maxTimeoutMs": 180000
+  }
+}
