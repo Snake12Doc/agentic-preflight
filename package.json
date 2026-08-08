@@ -29,6 +29,7 @@
     "dist",
     "skills",
     "README.md",
+    "README.es.md",
     "LICENSE"
   ],
   "scripts": {
