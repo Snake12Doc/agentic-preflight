@@ -17,7 +17,7 @@
     "node": ">=20"
   },
   "bin": {
-    "agentic-preflight": "./dist/cli.js"
+    "agentic-preflight": "dist/cli.js"
   },
   "exports": {
     ".": {
