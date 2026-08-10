@@ -1,6 +1,6 @@
 {
   "name": "agentic-preflight",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local quality gates for AI coding agents, available as a CLI and MCP server.",
   "type": "module",
   "license": "MIT",
@@ -30,6 +30,7 @@
     "skills",
     "README.md",
     "README.es.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {

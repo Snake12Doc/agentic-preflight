@@ -69,7 +69,7 @@ export async function runProcess(
 
     const child = spawn(command, args, {
       cwd: root,
-      env: process.env,
+      env: { ...process.env, CI: process.env.CI ?? "true" },
       shell: false,
       detached,
       stdio: ["ignore", "pipe", "pipe"],

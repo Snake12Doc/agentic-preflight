@@ -39,6 +39,63 @@ async function exists(path: string): Promise<boolean> {
   }
 }
 
+const nodeChecks = [
+  ["test", "test", "Run the test suite"],
+  ["lint", "lint", "Run static analysis"],
+  ["typecheck", "typecheck", "Run type checking"],
+  ["build", "build", "Build the project"],
+  ["format-check", "format:check", "Check formatting"],
+] as const;
+
+async function createNodeConfig(root: string): Promise<PreflightConfig | undefined> {
+  const packageJson = JSON.parse(await readFile(join(root, "package.json"), "utf8")) as {
+    packageManager?: unknown;
+    scripts?: unknown;
+  };
+  const scripts =
+    packageJson.scripts && typeof packageJson.scripts === "object"
+      ? (packageJson.scripts as Record<string, unknown>)
+      : {};
+
+  let packageManager =
+    typeof packageJson.packageManager === "string"
+      ? packageJson.packageManager.split("@", 1)[0]
+      : undefined;
+  if (!packageManager || !["npm", "pnpm", "yarn"].includes(packageManager)) {
+    packageManager = (await exists(join(root, "pnpm-lock.yaml")))
+      ? "pnpm"
+      : (await exists(join(root, "yarn.lock")))
+        ? "yarn"
+        : "npm";
+  }
+
+  const command = packageManager === "npm" ? "npm" : "corepack";
+  const managerArgs = packageManager === "npm" ? [] : [packageManager];
+  const checks = Object.fromEntries(
+    nodeChecks
+      .filter(([, script]) => typeof scripts[script] === "string")
+      .map(([name, script, description]) => [
+        name,
+        {
+          command,
+          args: [...managerArgs, "run", script],
+          description,
+        },
+      ]),
+  );
+
+  if (Object.keys(checks).length === 0) return undefined;
+
+  return {
+    version: 1,
+    checks,
+    security: {
+      allowedExecutables: [command],
+      maxTimeoutMs: 300_000,
+    },
+  };
+}
+
 export async function createDefaultConfig(root: string): Promise<PreflightConfig> {
   if (await exists(join(root, "pom.xml"))) {
     const wrapper = (await exists(join(root, "mvnw"))) ? "./mvnw" : "mvn";
@@ -64,25 +121,8 @@ export async function createDefaultConfig(root: string): Promise<PreflightConfig
   }
 
   if (await exists(join(root, "package.json"))) {
-    return {
-      version: 1,
-      checks: {
-        test: {
-          command: "npm",
-          args: ["test"],
-          description: "Run the npm test script",
-        },
-        build: {
-          command: "npm",
-          args: ["run", "build"],
-          description: "Run the npm build script",
-        },
-      },
-      security: {
-        allowedExecutables: ["npm"],
-        maxTimeoutMs: 300_000,
-      },
-    };
+    const nodeConfig = await createNodeConfig(root);
+    if (nodeConfig) return nodeConfig;
   }
 
   return {

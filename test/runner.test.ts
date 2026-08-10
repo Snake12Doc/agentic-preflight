@@ -42,6 +42,15 @@ describe("check runner", () => {
     });
   });
 
+  it("defaults non-interactive checks to a CI environment", async () => {
+    const report = await runChecks(
+      await temporaryProject(),
+      configFor("process.stdout.write(process.env.CI ?? '')"),
+    );
+
+    expect(report.results[0]?.stdout).toBe(process.env.CI ?? "true");
+  });
+
   it("captures a failed check without throwing", async () => {
     const report = await runChecks(
       await temporaryProject(),

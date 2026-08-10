@@ -25,7 +25,7 @@ selección de comandos permanece bajo el control del repositorio.
 - Lista de ejecutables permitidos, tiempos de espera limitados y sin
   interpolación de shell.
 - Informes JSON persistentes para su revisión por agentes y personas.
-- Configuración inicial automática para proyectos Maven y npm.
+- Configuración inicial automática para proyectos Maven, npm, pnpm y Yarn.
 - Skills reutilizables para generar pruebas, revisar código y comprobar pull
   requests.
 - Ejemplo completo con Spring Boot.
@@ -82,6 +82,8 @@ Una configuración para Maven puede tener este aspecto:
 
 Los comandos se ejecutan directamente, sin un shell. Por diseño, no se admiten
 funciones como tuberías, redirecciones, sustitución de comandos o `sh -c`.
+Las comprobaciones reciben `CI=true` por defecto para evitar preguntas
+interactivas; se conserva cualquier valor existente de la variable `CI`.
 
 ## CLI
 

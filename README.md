@@ -22,7 +22,7 @@ while keeping command selection under repository control.
 - MCP server with four focused tools.
 - Executable allowlist, bounded timeouts, no shell interpolation.
 - Persistent JSON reports for agent and human review.
-- Automatic starter configuration for Maven and npm projects.
+- Automatic starter configuration for Maven, npm, pnpm, and Yarn projects.
 - Reusable skills for test generation, code review, and PR preflight.
 - Complete Spring Boot example.
 
@@ -77,6 +77,8 @@ project. A Maven configuration can look like this:
 
 Commands are executed directly, without a shell. Features such as pipes,
 redirects, command substitution, and `sh -c` are intentionally unsupported.
+Checks receive `CI=true` by default to prevent interactive prompts; an existing
+`CI` environment value is preserved.
 
 ## CLI
 
