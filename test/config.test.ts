@@ -86,6 +86,37 @@ describe("configuration", () => {
     });
   });
 
+  it("detects integration and end-to-end scripts in a pnpm workspace", async () => {
+    const root = await temporaryProject();
+    await writeFile(
+      join(root, "package.json"),
+      JSON.stringify({
+        packageManager: "pnpm@11.21.0",
+        scripts: {
+          "test:integration": "pnpm --filter api test:integration",
+          "test:e2e": "pnpm --filter web test:e2e",
+        },
+      }),
+    );
+    await writeFile(join(root, "pnpm-workspace.yaml"), "packages:\n  - apps/*\n");
+
+    await initializeConfig(root);
+    const config = await loadConfig(root);
+
+    expect(config.checks).toEqual({
+      integration: {
+        command: "corepack",
+        args: ["pnpm", "run", "test:integration"],
+        description: "Run integration tests",
+      },
+      e2e: {
+        command: "corepack",
+        args: ["pnpm", "run", "test:e2e"],
+        description: "Run end-to-end tests",
+      },
+    });
+  });
+
   it("uses npm and only includes scripts that exist", async () => {
     const root = await temporaryProject();
     await writeFile(join(root, "package.json"), JSON.stringify({ scripts: { build: "tsc" } }));

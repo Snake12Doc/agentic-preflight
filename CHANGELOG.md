@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 - 2026-08-11
+
+### Added
+
+- Detect `test:integration` and `test:e2e` package scripts when generating
+  starter configuration for Node.js projects, including pnpm workspaces.
+
 ## 0.2.0 - 2026-08-10
 
 ### Added

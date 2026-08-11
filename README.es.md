@@ -57,6 +57,9 @@ node dist/cli.js --help
 `agentic-preflight init` crea `agentic-preflight.json` en el proyecto actual.
 Una configuración para Maven puede tener este aspecto:
 
+En proyectos Node.js, la inicialización detecta los scripts de pruebas, lint,
+tipos, build, formato, integración y end-to-end cuando están presentes.
+
 ```json
 {
   "version": 1,

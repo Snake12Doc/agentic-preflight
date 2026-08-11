@@ -45,6 +45,8 @@ const nodeChecks = [
   ["typecheck", "typecheck", "Run type checking"],
   ["build", "build", "Build the project"],
   ["format-check", "format:check", "Check formatting"],
+  ["integration", "test:integration", "Run integration tests"],
+  ["e2e", "test:e2e", "Run end-to-end tests"],
 ] as const;
 
 async function createNodeConfig(root: string): Promise<PreflightConfig | undefined> {
