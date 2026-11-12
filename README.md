@@ -26,16 +26,6 @@ while keeping command selection under repository control.
 - Reusable skills for test generation, code review, and PR preflight.
 - Complete Spring Boot example.
 
-## Documentation and roadmap
-
-- [Functional guide: agentic-preflight and ArchSentinel (Spanish)](docs/agentic-preflight-y-archsentinel.md): current behavior, configuration, reports, AI review, and integration boundaries.
-- [Implementation roadmap (Spanish)](ROADMAP.md): phased tasks, acceptance criteria, dependencies, and progress tracking.
-- [AI-sized work units (Spanish)](docs/roadmap-unidades-ia.md): executable tasks with dependencies and verification.
-- [Local ArchSentinel audit (Spanish)](docs/auditoria-archsentinel.md): capabilities by branch and uncommitted work to reuse.
-
-The guide describes implemented behavior; the roadmap explicitly tracks planned
-capabilities. Both are maintained alongside relevant development changes.
-
 ## Requirements
 
 - Node.js 20 or later.
@@ -173,9 +163,14 @@ The repository configuration remains trusted code. Review changes to
 
 ## Development
 
-Follow [CONTRIBUTING.md](CONTRIBUTING.md) for the same Git Flow used by
+Follow the [contribution instructions](AGENTS.md#ramas-y-contribución) for the same Git Flow used by
 ArchSentinel: planned work starts in `feature/*` from `develop` and returns to
 `develop` through a PR. `main` holds the stable production line.
+
+A branch may contain several related work units that form one reviewable delivery.
+Releases start from `develop` and target `main`; hotfixes start from `main`.
+Both are synchronized back into `develop`. CI validates PR branch routes.
+Roadmaps and working notes remain local and are excluded from version control.
 
 ```bash
 npm install

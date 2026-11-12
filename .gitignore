@@ -14,6 +14,14 @@ coverage/
 .vitest/
 .agentic-preflight/
 
+# Local planning and working documentation (never force-add these files)
+/ROADMAP.md
+/docs/
+/CONTRIBUTING.md
+/.local-docs/
+ROADMAP*.md
+roadmap*.md
+
 # Local environment files
 .env
 .env.*
