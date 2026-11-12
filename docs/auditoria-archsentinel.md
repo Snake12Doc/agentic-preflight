@@ -5,15 +5,17 @@ ejecutar el [roadmap](../ROADMAP.md).
 
 ## Alcance y evidencia Git
 
-Revisados el árbol de trabajo, todas las ramas locales y las referencias
-`origin/*` ya disponibles. No se ha hecho fetch ni consultado GitHub: una
-referencia remota local no certifica el estado actual del servidor. No se han
-cambiado ramas ni alterado los cambios de ArchSentinel.
+Para ArchSentinel se revisaron el árbol de trabajo, todas las ramas locales y las
+referencias `origin/*` ya disponibles, sin fetch ni consulta a GitHub: esas
+referencias no certifican el estado actual del servidor. No se han cambiado sus
+ramas ni alterado sus cambios. Para preflight, durante la publicación autorizada
+de F0 se hizo fetch y se crearon las ramas remotas y el PR indicados abajo.
 
 | Repositorio / referencia local | Commit | Observación |
 | --- | --- | --- |
 | Preflight `main`, `origin/main` | `5271108` | Línea estable local; sin puente MCP de arquitectura en `src`. |
-| Preflight `develop`, `feature/git-flow-workflow` (HEAD) | `5271108` | Creadas localmente durante F0.7; cambios documentales y CI sin commit. No existe aún referencia local `origin/develop` ni se han publicado las ramas. |
+| Preflight `develop`, `origin/develop` | `5271108` | Base publicada durante la entrega F0; pendiente de integrar el PR. |
+| Preflight `feature/git-flow-workflow` | `52573d6` (entrega F0) | Rama publicada; [PR #1](https://github.com/Snake12Doc/agentic-preflight/pull/1) hacia develop. Puede incluir commits posteriores de seguimiento documental. |
 | ArchSentinel `main`, `origin/main` | `ba2d2d9` | Línea estable local, versión declarada 0.3.0. |
 | ArchSentinel `develop`, `origin/develop` | `fd5cba7` | Contiene Git diff, revisión semántica y preparación del analizador Vue. |
 | `feature/git-diff-analysis` | `dbe1e63` | Integrada en `develop`; no es trabajo nuevo pendiente. |

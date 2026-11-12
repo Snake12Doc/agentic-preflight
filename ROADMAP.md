@@ -104,8 +104,9 @@ requieren petición expresa; la adopción local no implica publicación en GitHu
 - Incluye F0.1–F0.7: documentación, desglose, auditoría y adopción del flujo.
 - Aceptación conjunta: documentación enlazada, progreso trazable, rutas de PR
   iguales a ArchSentinel y checks existentes preservados y correctos.
-- Destino previsto del PR: `develop`. Estado de integración: sin commit, sin
-  publicación y sin PR; `develop` también es local por ahora.
+- Destino del PR: `develop`. Commit de la entrega: `52573d6`.
+  `develop` y la feature están publicadas; [PR #1](https://github.com/Snake12Doc/agentic-preflight/pull/1)
+  abierto, pendiente de revisión e integración.
 - F1.1.1 sigue pendiente; su entrega es distinta y debe comenzar en una feature
   adecuada desde develop cuando esté disponible su base documental integrada.
 
@@ -282,6 +283,7 @@ en la estimación F1–F9.
 | 2026-11-12 | F0.1–F0.5 | Añadidos roadmap, guía funcional e instrucciones de mantenimiento; enlazados desde ambos README. | Enlaces locales revisados; configuración, informes y ejemplos contrastados con el código; ayuda CLI de ambos proyectos comprobada; `git diff --check` correcto. Entrega documental local, sin commit/PR. |
 | 2026-11-12 | F0.6 | Auditadas todas las ramas locales y el árbol de ArchSentinel; añadidas 134 unidades principales y 16 de extensiones, conservando IDs padre. Guía e instrucciones actualizadas con diferencias main/develop/local. | Cobertura de entregas y dependencias revisadas; enlaces locales y formato comprobados; suites repetidas: P 17, A 218 correctas. `main` A: `ba2d2d9`; develop/HEAD A: `fd5cba7` más Vue sin commit. Sin fetch ni cambios en ArchSentinel. |
 | 2026-11-12 | F0.7.1–F0.7.4 | Adoptado el Git Flow de ArchSentinel: CONTRIBUTING, instrucciones y plantilla PR, job de rutas y ramas locales develop/feature. Conservada la documentación previa. F1.1.1 pausada durante esta entrega. | `npm run check` correcto: tipos, build, 36 tests y empaquetado en seco. 19 casos ejecutan el script real de rutas. Formato y enlaces revisados. Base `5271108`; ramas sin publicar, sin commit/PR ni cambios en ArchSentinel. |
+| 2026-11-12 | Publicación F0 | Con autorización del usuario, guardada la entrega, publicadas develop y feature y abierto el PR hacia develop. | Commit `52573d6`; [PR #1](https://github.com/Snake12Doc/agentic-preflight/pull/1). Sin fusión, tag ni publicación de paquete. |
 
 ## Criterio común de cierre
 

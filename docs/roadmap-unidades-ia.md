@@ -313,6 +313,8 @@ aceptación y estimación propias antes de empezar.
 
 La siguiente unidad funcional es **F1.1.1**, tras F0.6 y F0.7. Preparar su rama
 según CONTRIBUTING: la entrega F0 está en `feature/git-flow-workflow` y todavía
-no está integrada en develop. Resolver esa integración con autorización antes
+no está integrada en develop
+([PR #1](https://github.com/Snake12Doc/agentic-preflight/pull/1)). Resolver esa
+integración con autorización antes
 de arrastrar cambios a otra entrega. No cambiar la rama de ArchSentinel para
 empezar F1 sin registrar primero la capacidad y revisión que se van a utilizar.
