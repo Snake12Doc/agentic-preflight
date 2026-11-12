@@ -70,7 +70,7 @@ las plataformas ya verificadas por preflight.
 | [x] F0.7.2 | F0.7.1 | Crear develop local desde main y una feature desde develop, conservando cambios existentes. No publicar ni crear commits/PR. | `git branch -avv`, estado y SHA de las bases. |
 | [x] F0.7.3 | F0.7.1 | Añadir job Git Flow con las mismas rutas y eventos de PR que ArchSentinel. Conservar los jobs npm/Windows/Maven. Probar rutas admitidas y rechazadas ejecutando el script real. | P:test/git-flow-workflow.test.ts (nuevo). |
 | [x] F0.7.4 | F0.7.2, F0.7.3 | Ejecutar check completo, registrar ramas locales frente a referencias remotas y actualizar estado del roadmap. | `npm run check`, revisión documental y `git diff --check`. |
-| [ ] F0.7.5 | F0.7.4 | Corregir lectura CRLF del script real de CI detectada en Windows; probar LF/CRLF sin Bash y confirmar la matriz del PR. | P:test/git-flow-workflow.test.ts, `npm run check` y CI del PR #1. |
+| [x] F0.7.5 | F0.7.4 | Corregir lectura CRLF del script real de CI detectada en Windows; probar LF/CRLF sin Bash y confirmar la matriz del PR. | P:test/git-flow-workflow.test.ts, `npm run check` y CI del PR #1. |
 
 ## F1 — Recorrido CLI
 

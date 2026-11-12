@@ -94,6 +94,11 @@ tipos, build, MCP y empaquetado: **36 pruebas correctas** (las 17 anteriores y
 en Windows, mientras el job de política de GitHub se ejecuta en Ubuntu. Este
 resultado local no certifica una ejecución del workflow en GitHub.
 
+Actualización F0.7.5: la ejecución real de Windows detectó CRLF en el checkout.
+Corregido en `f78b57a` y añadidas dos pruebas LF/CRLF: `npm run check` local pasa
+con 38 tests. El [run 43252110956](https://github.com/Snake12Doc/agentic-preflight/actions/runs/43252110956)
+confirma Git Flow, Ubuntu Node 20/24, Windows Node 24 y Spring Boot correctos.
+
 ## Revalidación antes de cada tarea
 
 1. Consultar rama, SHA y cambios locales de ambos repositorios.
