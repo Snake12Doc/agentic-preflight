@@ -30,6 +30,16 @@ selección de comandos permanece bajo el control del repositorio.
   requests.
 - Ejemplo completo con Spring Boot.
 
+## Documentación y roadmap
+
+- [Guía funcional: agentic-preflight y ArchSentinel](docs/agentic-preflight-y-archsentinel.md): funcionamiento actual, configuración, informes, revisión con IA y límites de la integración.
+- [Roadmap de implementación](ROADMAP.md): tareas por fases, criterios de aceptación, dependencias y seguimiento del progreso.
+- [Unidades de trabajo para IA](docs/roadmap-unidades-ia.md): tareas ejecutables con dependencias y verificación.
+- [Auditoría local de ArchSentinel](docs/auditoria-archsentinel.md): capacidades por rama y cambios sin commit que deben reutilizarse.
+
+La guía describe el comportamiento implementado; el roadmap identifica las
+capacidades previstas. Ambos se mantienen junto con los desarrollos que les afectan.
+
 ## Requisitos
 
 - Node.js 20 o posterior.
@@ -173,6 +183,10 @@ Revisa los cambios en `agentic-preflight.json` antes de ejecutar comprobaciones
 procedentes de una rama que no sea de confianza.
 
 ## Desarrollo
+
+Sigue [CONTRIBUTING.md](CONTRIBUTING.md) para usar el mismo Git Flow que
+ArchSentinel: el trabajo planificado parte de `develop` en ramas `feature/*`
+y vuelve a `develop` mediante PR. `main` mantiene la línea estable de producción.
 
 ```bash
 npm install
