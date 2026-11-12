@@ -2,13 +2,38 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop, 'release/**', 'hotfix/**']
   pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  branch-policy:
+    name: Git Flow
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate pull request branches
+        id: route
+        shell: bash
+        run: |
+          printf 'Pull request: %s -> %s\n' "$GITHUB_HEAD_REF" "$GITHUB_BASE_REF"
+          case "$GITHUB_BASE_REF:$GITHUB_HEAD_REF" in
+            develop:feature/?*|develop:release/?*|develop:hotfix/?*|develop:main|main:release/?*|main:hotfix/?*)
+              printf 'Valid Git Flow pull request.\n'
+              ;;
+            *)
+              printf '::error::Invalid pull request route. See CONTRIBUTING.md for supported Git Flow routes.\n'
+              exit 1
+              ;;
+          esac
+
   package:
     strategy:
       matrix:
