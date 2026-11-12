@@ -6,14 +6,26 @@ const workflow = readFileSync(
   new URL("../.github/workflows/ci.yml", import.meta.url),
   "utf8",
 );
-// Execute the actual CI route script rather than a second implementation of it.
-const routeStep = workflow.match(
-  /        id: route\n        shell: bash\n        run: \|\n((?:          [^\n]*(?:\n|$))+)/,
-);
-if (!routeStep?.[1]) {
-  throw new Error("Git Flow route validation script was not found in CI");
+function routeScript(contents: string): string {
+  // Git checkouts can use CRLF; Bash receives the same LF-normalized script.
+  const routeStep = contents.replace(/\r\n/g, "\n").match(
+    /        id: route\n        shell: bash\n        run: \|\n((?:          [^\n]*(?:\n|$))+)/,
+  );
+  if (!routeStep?.[1]) {
+    throw new Error("Git Flow route validation script was not found in CI");
+  }
+  return routeStep[1].replace(/^ {10}/gm, "");
 }
-const script = routeStep[1].replace(/^ {10}/gm, "");
+
+// Execute the actual CI route script rather than a second implementation of it.
+const script = routeScript(workflow);
+
+describe("Git Flow workflow line endings", () => {
+  it.each(["\n", "\r\n"])("extracts the script with %j line endings", (ending) => {
+    expect(routeScript(workflow.replace(/\r?\n/g, ending))).toBe(script);
+    expect(script).not.toContain("\r");
+  });
+});
 
 function checkRoute(head: string, base: string) {
   return spawnSync(

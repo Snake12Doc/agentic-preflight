@@ -63,7 +63,7 @@ de un modelo real. Las siguientes entregas deben registrar sus propios resultado
 
 | Fase | Entrega | Repositorio principal | Dependencias | Estado | Esfuerzo orientativo |
 | --- | --- | --- | --- | --- | --- |
-| F0 | Documentación y flujo de contribución | Preflight | — | Completada | Esta entrega |
+| F0 | Documentación y flujo de contribución | Preflight | — | En curso | Esta entrega |
 | F1 | Integración ejecutable por CLI | Preflight | F0 | Pendiente | 2–6 h |
 | F2 | Integración nativa MCP e informe conjunto | Preflight + ArchSentinel | F1 | Pendiente | 16–32 h |
 | F3 | Política de fallo de IA y revisión incompleta | ArchSentinel + Preflight | F2 | Pendiente | 4–8 h |
@@ -84,7 +84,7 @@ pero comprobar compatibilidad y estabilizar trabajo sin commit sigue teniendo co
 
 ## F0 — Documentación y seguimiento
 
-Estado: completada. Responsable: repositorio agentic-preflight.
+Estado: en curso. Responsable: repositorio agentic-preflight.
 
 - [x] F0.1 Publicar este roadmap con fases, dependencias y aceptación.
 - [x] F0.2 Publicar la guía del funcionamiento real y la interacción con ArchSentinel.
@@ -92,7 +92,7 @@ Estado: completada. Responsable: repositorio agentic-preflight.
 - [x] F0.4 Añadir instrucciones persistentes para mantener documentación y progreso.
 - [x] F0.5 Revisar enlaces, ejemplos y separación entre implementado y previsto.
 - [x] F0.6 Auditar ramas locales y desglosar todas las entregas en unidades ejecutables por IA.
-- [x] F0.7 Adoptar localmente el Git Flow de ArchSentinel: documentación, ramas y validación CI.
+- [ ] F0.7 Adoptar el Git Flow de ArchSentinel: documentación, ramas y validación CI.
 
 F0.7 responde a la decisión del usuario de usar el mismo flujo en ambos proyectos.
 Sus unidades están en el catálogo. La publicación de ramas y apertura de PR
@@ -284,6 +284,8 @@ en la estimación F1–F9.
 | 2026-11-12 | F0.6 | Auditadas todas las ramas locales y el árbol de ArchSentinel; añadidas 134 unidades principales y 16 de extensiones, conservando IDs padre. Guía e instrucciones actualizadas con diferencias main/develop/local. | Cobertura de entregas y dependencias revisadas; enlaces locales y formato comprobados; suites repetidas: P 17, A 218 correctas. `main` A: `ba2d2d9`; develop/HEAD A: `fd5cba7` más Vue sin commit. Sin fetch ni cambios en ArchSentinel. |
 | 2026-11-12 | F0.7.1–F0.7.4 | Adoptado el Git Flow de ArchSentinel: CONTRIBUTING, instrucciones y plantilla PR, job de rutas y ramas locales develop/feature. Conservada la documentación previa. F1.1.1 pausada durante esta entrega. | `npm run check` correcto: tipos, build, 36 tests y empaquetado en seco. 19 casos ejecutan el script real de rutas. Formato y enlaces revisados. Base `5271108`; ramas sin publicar, sin commit/PR ni cambios en ArchSentinel. |
 | 2026-11-12 | Publicación F0 | Con autorización del usuario, guardada la entrega, publicadas develop y feature y abierto el PR hacia develop. | Commit `52573d6`; [PR #1](https://github.com/Snake12Doc/agentic-preflight/pull/1). Sin fusión, tag ni publicación de paquete. |
+| 2026-11-12 | F0.7.5 en curso | CI detecta que el test de rutas no admite CRLF al cargar el workflow en Windows. Reabierta la entrega para corregir la regresión antes de revisión. | Run `43251727411`: Git Flow, Ubuntu y Maven correctos; Windows falla al extraer el script. |
+| 2026-11-12 | F0.7.5 corrección local | Normalizados saltos de línea del workflow al extraer el script; añadidas pruebas LF/CRLF ejecutables también en Windows sin Bash. | `npm run check` correcto: 38 tests, tipos, build y empaquetado en seco. Pendiente confirmar CI Windows del commit corregido. |
 
 ## Criterio común de cierre
 
