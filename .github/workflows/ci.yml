@@ -29,7 +29,7 @@ jobs:
               printf 'Valid Git Flow pull request.\n'
               ;;
             *)
-              printf '::error::Invalid pull request route. See CONTRIBUTING.md for supported Git Flow routes.\n'
+              printf '::error::Invalid pull request route. See AGENTS.md for supported Git Flow routes.\n'
               exit 1
               ;;
           esac
