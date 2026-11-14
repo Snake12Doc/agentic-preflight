@@ -1,9 +1,16 @@
-import { mkdtemp, symlink } from "node:fs/promises";
+import { mkdtemp, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { runChecks } from "../src/runner.js";
 import type { PreflightConfig } from "../src/types.js";
+import {
+  cleanupTimeoutProcesses,
+  expectTimeoutProcessesStopped,
+  readTimeoutProcesses,
+  timeoutProcessScript,
+  type TimeoutProcesses,
+} from "./helpers/timeout-process.js";
 
 async function temporaryProject(): Promise<string> {
   return mkdtemp(join(tmpdir(), "agentic-preflight-runner-"));
@@ -65,26 +72,35 @@ describe("check runner", () => {
     });
   });
 
-  it("terminates checks that exceed their timeout", async () => {
-    const report = await runChecks(
-      await temporaryProject(),
-      configFor("setTimeout(() => {}, 10000)", 50),
-    );
+  it.each(["parent-exits", "ignore-term"])(
+    "terminates the whole process group after timeout (%s)",
+    async (mode) => {
+      const root = await temporaryProject();
+      let pids: TimeoutProcesses | undefined;
+      try {
+        const config = configFor("", 1500);
+        config.checks.example = {
+          command: process.execPath,
+          args: [timeoutProcessScript, mode],
+        };
+        const report = await runChecks(root, config);
+        const check = report.results[0];
+        pids = readTimeoutProcesses(check?.stdout ?? "");
 
-    expect(report.passed).toBe(false);
-    expect(report.results[0]?.status).toBe("timed_out");
-  });
-
-  it("force kills checks that ignore the termination signal", async () => {
-    const startedAt = Date.now();
-    const report = await runChecks(
-      await temporaryProject(),
-      configFor("process.on('SIGTERM', () => {}); setInterval(() => {}, 1000)", 100),
-    );
-
-    expect(report.results[0]?.status).toBe("timed_out");
-    expect(Date.now() - startedAt).toBeLessThan(2000);
-  });
+        expect(report.passed).toBe(false);
+        expect(check?.status).toBe("timed_out");
+        expect(check?.exitCode).not.toBe(99);
+        if (mode === "ignore-term" && process.platform !== "win32") {
+          expect(check?.stdout).toContain("IGNORED_SIGTERM");
+        }
+        await expectTimeoutProcessesStopped(pids);
+      } finally {
+        if (pids) await cleanupTimeoutProcesses(pids);
+        await rm(root, { recursive: true, force: true });
+      }
+    },
+    20_000,
+  );
 
   it.runIf(process.platform !== "win32")(
     "rejects a relative executable symlink that escapes the project",
