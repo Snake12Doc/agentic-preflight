@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "checks": {
+    "test": {
+      "command": "node",
+      "args": ["../../node_modules/tsx/dist/cli.mjs", "--test", "test/place-order.node-test.ts"],
+      "description": "Verify order placement behavior",
+      "timeoutMs": 30000
+    },
+    "typecheck": {
+      "command": "node",
+      "args": ["../../node_modules/typescript/bin/tsc", "--project", "tsconfig.json"],
+      "description": "Check the example TypeScript",
+      "timeoutMs": 30000
+    },
+    "architecture": {
+      "command": "node",
+      "args": ["scripts/check-architecture.mjs"],
+      "description": "Check architecture using the configured local ArchSentinel CLI",
+      "timeoutMs": 30000
+    }
+  },
+  "security": {
+    "allowedExecutables": ["node"],
+    "maxTimeoutMs": 30000
+  }
+}

@@ -155,6 +155,65 @@ AGENTIC_PREFLIGHT_ROOT="$PWD/examples/spring-boot-demo" \
 El ejemplo muestra comprobaciones de pruebas y empaquetado con Maven sin
 necesidad de utilizar código privado de una aplicación.
 
+## Fixture de arquitectura TypeScript
+
+`examples/archsentinel-demo` contiene un caso de uso mínimo de pedidos. La capa
+de aplicación depende de dominio; dominio no admite dependencias de otras
+capas. El contrato `architecture.yaml` declara esas fronteras y límites de calidad.
+
+Prepara el ejemplo con Node.js 20 o posterior, Git y pnpm 10.27.0 disponibles.
+Clonar ArchSentinel requiere acceso al repositorio y credenciales SSH de GitHub operativas.
+Desde la raíz de preflight, elige un destino absoluto nuevo fuera de este clon,
+cuyo directorio padre ya exista (shell POSIX):
+
+```bash
+npm ci
+npm run build
+
+export ARCHSENTINEL_ROOT="/absolute/path/to/new/ArchSentinel-f1"
+git clone --no-checkout git@github.com:Snake12Doc/ArchSentinel.git "$ARCHSENTINEL_ROOT"
+git -C "$ARCHSENTINEL_ROOT" checkout --detach ba2d2d92d45c69cbedb780b7faecf35c26a8ebf9
+pnpm --dir "$ARCHSENTINEL_ROOT" install --frozen-lockfile
+pnpm --dir "$ARCHSENTINEL_ROOT" build
+export ARCHSENTINEL_CLI="$ARCHSENTINEL_ROOT/dist/cli.js"
+```
+
+Así se fija ArchSentinel 0.3.0 por commit y se compila por separado, conservando
+cualquier trabajo existente en ArchSentinel. Provisiona pnpm antes de empezar;
+Node.js no siempre incluye Corepack. Solo la preparación necesita descargas.
+
+Para comprobar arquitectura directamente, ejecuta desde
+`examples/archsentinel-demo` usando la ruta absoluta exportada:
+
+```bash
+node "$ARCHSENTINEL_CLI" check --language typescript --format json
+```
+
+El fixture válido produce `status: "PASS"` sin hallazgos. La comprobación se
+ejecuta directamente con ArchSentinel y dependencias ya instaladas. Para comprobar
+los tipos del fixture desde la raíz de preflight después de `npm ci`:
+
+```bash
+node node_modules/typescript/bin/tsc --project examples/archsentinel-demo/tsconfig.json
+```
+
+El fixture también define los checks `test`, `typecheck` y `architecture` de
+preflight. Después de instalar las dependencias de la raíz y compilar preflight,
+ejecuta los tres desde la raíz del repositorio (shell POSIX):
+
+```bash
+AGENTIC_PREFLIGHT_ROOT="$PWD/examples/archsentinel-demo" \
+  node dist/cli.js check
+```
+
+`ARCHSENTINEL_CLI` la lee el script auxiliar del ejemplo; preflight no interpola
+esa variable. Debe apuntar a la CLI compilada por separado indicada arriba. El
+script invoca Node sin shell y conserva el código de salida de la CLI de
+arquitectura. La configuración no contiene rutas personales y utiliza las
+dependencias TypeScript/tsx de la raíz: el ejemplo se ejecuta dentro de este clon.
+No se descargan paquetes durante los checks. El informe se guarda en
+`.agentic-preflight/latest-report.json` dentro del ejemplo.
+
 ## Modelo de seguridad
 
 - Los argumentos MCP pueden seleccionar comprobaciones por nombre, pero no
