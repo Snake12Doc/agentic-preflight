@@ -208,6 +208,48 @@ dependencies; the example therefore runs inside this repository checkout.
 No package download occurs during the checks. The report is saved under the
 example's `.agentic-preflight/latest-report.json`.
 
+### Results and reports
+
+The CLI has two levels of exit codes: preflight `check` returns `0` when every
+selected check passes and `1` otherwise; each saved `results[]` entry retains the
+external process's own `exitCode`. The following outcomes were verified with the
+example and the pinned ArchSentinel CLI above:
+
+| Scenario | Check `status` | Process `exitCode` | Diagnostic location | Preflight `check` exit | Latest report |
+| --- | --- | --- | --- | --- | --- |
+| Valid architecture | `passed` | `0` | Check stdout: JSON `PASS` | `0` | New, `passed: true` |
+| Forbidden layer dependency | `failed` | `1` | Check stdout: JSON `FAIL`, including `HEX-001` | `1` | New, `passed: false` |
+| Invalid architecture contract | `failed` | `2` | Check stderr: JSON `ERROR` of type `configuration` | `1` | New, `passed: false` |
+| Executable cannot start, no prior report | No new result | — | Preflight CLI stderr: `Unable to run … ENOENT` | `1` | Absent |
+| Executable cannot start, prior report exists | No new result | — | Preflight CLI stderr: `Unable to run … ENOENT` | `1` | Previous report unchanged |
+| External check times out | `timed_out` | `null` in the captured POSIX run | Partial output in the check's stdout/stderr | `1` | New, `passed: false` |
+
+Here, check stdout/stderr means the strings stored in the report, not preflight's
+own terminal streams. Preflight writes human-readable summaries to CLI stdout;
+for a non-passing check it also displays that check's stderr, or stdout if stderr
+is empty. Thus the contract error JSON is stored in **check stderr** but displayed
+on **preflight CLI stdout**. Successful check output remains in the report.
+Preflight stdout is not a JSON report and the architecture JSON remains a string
+inside the generic check result.
+
+`timed_out` is the timeout indicator: its process code can be null or vary with
+the platform and termination method. The timeout capture used a controlled
+process, not a completed ArchSentinel review; partial output need not be JSON.
+Remaining checks continue after a timeout. On POSIX the runner sends SIGTERM to
+the process group, then schedules SIGKILL 500 ms later even if the immediate
+process exits first. Windows uses `taskkill /t /f`.
+
+An executable launch exception aborts before saving a new report; — above means
+there is no process result, rather than a recorded null exit code. A previous
+report may therefore still describe an older successful run. Check `startedAt`,
+`finishedAt` and the selected results when reading `.agentic-preflight/latest-report.json`.
+The `report` command only displays the stored run and returns `0` if it can read
+it, even when `passed` is false; use `check`, not `report`, as a CI gate.
+
+The JSON `PASS`/`FAIL`/`ERROR` meanings above belong to ArchSentinel in JSON mode.
+Preflight does not interpret exit code `2` as a universal error category for all
+tools; other commands or wrapper failures can return plain-text diagnostics.
+
 ## Security model
 
 - MCP arguments can select check names, not executables or arguments.
@@ -229,6 +271,8 @@ ArchSentinel: planned work starts in `feature/*` from `develop` and returns to
 A branch may contain several related work units that form one reviewable delivery.
 Releases start from `develop` and target `main`; hotfixes start from `main`.
 Both are synchronized back into `develop`. CI validates PR branch routes.
+GitHub automatically deletes source branches after merging PRs. Release and
+hotfix branches are retained until both integrations, as described in AGENTS.
 Roadmaps and working notes remain local and are excluded from version control.
 
 ```bash
@@ -238,6 +282,25 @@ npm run check
 
 The test suite covers configuration validation, success, failure and timeout
 behavior, and a real MCP stdio client/server round trip.
+
+The external ArchSentinel CLI integration tests are opt-in. To include them,
+provide the absolute path to the separately built CLI described above:
+
+```bash
+ARCHSENTINEL_CLI="$ARCHSENTINEL_ROOT/dist/cli.js" npm run check
+```
+
+These tests copy the example into temporary directories and verify both a valid
+project and a forbidden domain-to-infrastructure dependency. In the latter case,
+functional tests and types still pass while the architecture gate fails. Without
+`ARCHSENTINEL_CLI`, these integration cases are skipped; the normal suite remains
+independent of an ArchSentinel installation. A configured invalid path fails setup.
+
+The suite also checks invalid architecture contracts. See the
+[result matrix](#results-and-reports) for exit codes, output streams and report
+persistence. Launch-error and timeout tests use controlled processes and run
+without an ArchSentinel installation, including previous-report preservation
+and process startup/termination checks.
 
 ## License
 

@@ -214,6 +214,50 @@ dependencias TypeScript/tsx de la raíz: el ejemplo se ejecuta dentro de este cl
 No se descargan paquetes durante los checks. El informe se guarda en
 `.agentic-preflight/latest-report.json` dentro del ejemplo.
 
+### Resultados e informes
+
+La CLI tiene dos niveles de códigos de salida: `check` de preflight devuelve `0`
+si todos los checks seleccionados pasan y `1` en caso contrario; cada entrada de
+`results[]` conserva el `exitCode` del proceso externo. Estos resultados se han
+verificado con el ejemplo y la CLI de ArchSentinel fijada arriba:
+
+| Escenario | `status` del check | `exitCode` del proceso | Ubicación del diagnóstico | Exit de `check` de preflight | Último informe |
+| --- | --- | --- | --- | --- | --- |
+| Arquitectura válida | `passed` | `0` | stdout del check: JSON `PASS` | `0` | Nuevo, `passed: true` |
+| Dependencia entre capas prohibida | `failed` | `1` | stdout del check: JSON `FAIL` con `HEX-001` | `1` | Nuevo, `passed: false` |
+| Contrato de arquitectura inválido | `failed` | `2` | stderr del check: JSON `ERROR` de tipo `configuration` | `1` | Nuevo, `passed: false` |
+| Ejecutable no arranca, sin informe previo | Sin resultado nuevo | — | stderr de la CLI preflight: `Unable to run … ENOENT` | `1` | Ausente |
+| Ejecutable no arranca, con informe previo | Sin resultado nuevo | — | stderr de la CLI preflight: `Unable to run … ENOENT` | `1` | Se conserva el anterior |
+| Timeout del check externo | `timed_out` | `null` en la captura POSIX | Salida parcial en stdout/stderr del check | `1` | Nuevo, `passed: false` |
+
+Aquí, stdout/stderr del check son las cadenas guardadas en el informe, no los
+streams de la propia CLI de preflight. Preflight escribe resúmenes legibles en su
+stdout y, para un check no aprobado, muestra además su stderr o, si está vacío,
+su stdout. Por eso el JSON del contrato inválido se guarda en **stderr del check**
+pero se muestra en **stdout de la CLI preflight**. La salida de los checks aprobados
+queda en el informe. El stdout de preflight no es un informe JSON y el JSON
+arquitectónico sigue siendo una cadena dentro del resultado genérico del check.
+
+`timed_out` identifica el timeout: el código del proceso puede ser null o variar
+según plataforma y forma de terminación. La captura de timeout usa un proceso
+controlado, no una revisión de ArchSentinel completada; la salida parcial no tiene
+por qué ser JSON. Los checks restantes continúan. En POSIX, el runner envía SIGTERM
+al grupo y programa SIGKILL 500 ms después aunque el proceso inmediato termine
+antes. Windows utiliza `taskkill /t /f`.
+
+Una excepción al iniciar el ejecutable aborta antes de guardar un informe nuevo;
+— indica que no existe resultado del proceso, no un exitCode null registrado. Un
+informe anterior puede seguir describiendo una ejecución antigua aprobada. Revisa
+`startedAt`, `finishedAt` y los resultados seleccionados al leer
+`.agentic-preflight/latest-report.json`. El comando `report` solo muestra el
+informe guardado y devuelve `0` si puede leerlo, incluso con `passed: false`;
+utiliza `check`, no `report`, como gate de CI.
+
+Los significados JSON `PASS`/`FAIL`/`ERROR` anteriores pertenecen a ArchSentinel en
+modo JSON. Preflight no interpreta el código `2` como una categoría universal de
+error para todas las herramientas: otros comandos o fallos del script auxiliar
+pueden devolver diagnósticos de texto plano.
+
 ## Modelo de seguridad
 
 - Los argumentos MCP pueden seleccionar comprobaciones por nombre, pero no
@@ -240,8 +284,10 @@ y vuelve a `develop` mediante PR. `main` mantiene la línea estable de producci�
 Una rama puede agrupar varias unidades relacionadas que formen una entrega
 revisable. Las releases parten de `develop` y se integran en `main`; los hotfixes
 parten de `main`. Ambos se sincronizan después con `develop`. CI valida las rutas
-de los PR. Los roadmaps y notas de trabajo se conservan solo en local y se excluyen
-del control de versiones.
+de los PR. GitHub borra automáticamente las ramas de origen tras fusionar los PR;
+las ramas release/hotfix se conservan hasta ambas integraciones siguiendo AGENTS.
+Los roadmaps y notas de trabajo se conservan solo en local y se excluyen del
+control de versiones.
 
 ```bash
 npm install
@@ -251,6 +297,26 @@ npm run check
 El conjunto de pruebas cubre la validación de la configuración, los resultados
 correctos, los errores, los tiempos de espera y un recorrido completo entre un
 cliente y un servidor MCP reales mediante stdio.
+
+Las pruebas de integración con la CLI externa de ArchSentinel son opt-in. Para
+incluirlas, indica la ruta absoluta a la CLI compilada por separado descrita arriba:
+
+```bash
+ARCHSENTINEL_CLI="$ARCHSENTINEL_ROOT/dist/cli.js" npm run check
+```
+
+Estas pruebas copian el ejemplo a directorios temporales y comprueban un proyecto
+válido y otro con una dependencia prohibida de dominio a infraestructura. En el
+segundo caso, los tests funcionales y los tipos pasan, pero el gate arquitectónico
+falla. Sin `ARCHSENTINEL_CLI`, se omiten estos casos de integración; la suite
+habitual sigue sin necesitar una instalación de ArchSentinel. Una ruta configurada
+inválida hace fallar la preparación.
+
+La suite también comprueba contratos de arquitectura inválidos. La
+[matriz de resultados](#resultados-e-informes) detalla códigos, streams e informes.
+Las pruebas de lanzamiento fallido y timeout usan procesos controlados y se
+ejecutan sin ArchSentinel instalado; incluyen la conservación del informe anterior
+y la comprobación del arranque y terminación de los procesos.
 
 ## Licencia
 
