@@ -72,6 +72,22 @@ describe("check runner", () => {
     });
   });
 
+  it("rejects an allowlisted missing executable with its launch diagnostic", async () => {
+    const root = await temporaryProject();
+    try {
+      const missing = join(root, "missing-tool.exe");
+      const config = configFor("");
+      config.checks.example = { command: missing, args: [] };
+      config.security.allowedExecutables = [missing];
+
+      const execution = runChecks(root, config);
+      await expect(execution).rejects.toThrow(`Unable to run '${missing}':`);
+      await expect(execution).rejects.toThrow("ENOENT");
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
   it.each(["parent-exits", "ignore-term"])(
     "terminates the whole process group after timeout (%s)",
     async (mode) => {
