@@ -10,8 +10,12 @@
   sesión; una rama/PR puede reunir varias unidades relacionadas y revisables.
 - Usar `release/*` desde develop y `hotfix/*` desde main para integrar en main;
   sincronizar después con develop. No trabajar directamente sobre ramas permanentes.
-- Conservar los cambios locales previos al crear/cambiar ramas. No publicar ramas,
-  crear commits/PR, fusionar, etiquetar ni publicar paquetes sin petición expresa.
+- Conservar los cambios locales previos al crear/cambiar ramas. Crear commits solo
+  cuando se soliciten. Por instrucción permanente del usuario, después de cada
+  commit solicitado y verificado, hacer push a su rama de trabajo; configurar
+  upstream en el primer push. No forzar la publicación ni reescribir historial.
+- El push tras commit no autoriza abrir PR, fusionar, etiquetar ni publicar
+  paquetes: esas operaciones siguen requiriendo petición expresa.
 
 Rutas de PR admitidas:
 
@@ -35,6 +39,13 @@ Rutas de PR admitidas:
   main como `vX.Y.Z` solo si se solicita. Publicar npm es una operación separada.
 - Mantener release/hotfix hasta integrar también sus cambios en develop. Si hay
   otra release en preparación, incorporar los hotfix pertinentes y verificarla.
+- GitHub elimina automáticamente las ramas de origen al fusionar un PR. Para
+  release/hotfix, desactivar temporalmente esa opción antes de la primera fusión
+  y reactivarla tras completar ambas integraciones, conservando así su rama.
+- Limpiar ramas feature locales solo después de confirmar su PR fusionado y que
+  todos sus commits están en develop. Usar `git branch -d`, nunca forzar el borrado;
+  conservar main, develop, la rama activa y cualquier rama con trabajo pendiente.
+  Actualizar referencias con `git fetch --prune` después de limpiar el remoto.
 - CI comprueba las rutas con el job `Git Flow`; la protección obligatoria de
   ramas depende de la configuración de GitHub y no se presupone activada.
 

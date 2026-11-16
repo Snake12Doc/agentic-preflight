@@ -128,7 +128,8 @@ export async function runProcess(
     });
     child.on("close", (exitCode) => {
       clearTimeout(timer);
-      if (forceKillTimer) clearTimeout(forceKillTimer);
+      // Keep timeout escalation scheduled: descendants in the process group can
+      // outlive the immediate process and still need SIGKILL after SIGTERM.
       if (!settled) {
         settled = true;
         resolvePromise({
